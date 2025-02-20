@@ -1,16 +1,22 @@
 import express from "express";
 import sequelize from "./config/db.js";
+import router from "./routes/character_route.js";
 
-//Middleware
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 app.use(express.json());
 
-//Connect to the database + start app
-sequelize.sync().then(() => {
-    console.log("Database connected succesfully");
-    app.listen(PORT, () =>
-        console.log(`Server running on: http://localhost:${PORT}`)
-    );
-});
+app.use("/characters", router);
+
+sequelize
+    .authenticate()
+    .then(() => {
+        console.log("Database connected successfully");
+        app.listen(PORT, () =>
+            console.log(`Server running on: http://localhost:${PORT}`)
+        );
+    })
+    .catch((err) => {
+        console.error("Unable to connect to the database:", err);
+    });
